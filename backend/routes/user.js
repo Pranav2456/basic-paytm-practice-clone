@@ -64,7 +64,23 @@ router.post("/signin", async (req, res) => {
         return res.status(411).json({ message: "Invalid inputs"});
     }
 
+    const user = await User.findOne({
+        username: req.body.username
+    })
 
+    if (!user) {
+        return res.status(411).json({ message: "Invalid inputs"});
+    } else if (await user.validatePassword(req.body.password)) {
+        const token = jwt.sign({
+            userId: user._id
+        }, JWT_SECRET);
+
+        res.json({
+            message: "User signed in successfully",
+            token: token
+        })
+        return;
+    }
 })
 
 
