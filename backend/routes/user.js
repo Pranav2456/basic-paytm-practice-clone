@@ -1,4 +1,4 @@
-const express = require('express');
+const { User } = require('../db');
 const zod = require('zod');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -51,6 +51,21 @@ router.post("/signup", async (req,res) => {
     })
 
 });
+
+const signInSchema = zod.object({
+    username: zod.string.email(),
+    password: zod.string()
+})
+
+router.post("/signin", async (req, res) => {
+    const { success } = signInSchema.safeParse(req.body);
+
+    if(!success) {
+        return res.status(411).json({ message: "Invalid inputs"});
+    }
+
+
+})
 
 
 module.exports = router;
