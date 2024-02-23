@@ -3,6 +3,7 @@ const zod = require('zod');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { JWT_SECRET } = require('../config');
+const { authMiddleware } = require('../middleware');
 
 const router = express.Router();
 
@@ -83,5 +84,51 @@ router.post("/signin", async (req, res) => {
     }
 })
 
+const updateBody = zod.object({
+    password: zod.string().optional(),
+    firstName: zod.string().optional(),
+    lastName: zod.string().optional()
+})
+router.put("/user", authMiddleware, async (req,res) => {
+    const { success } = updateBody.safeParse(req.body);
+
+    if(!success) {
+        return res.status(411).json({ message: "Error in updating user"});
+    }
+
+    await User.updateOne({
+        _id: req.userId
+    }, req.body);
+
+    res.json({
+        message: "User updated successfully"
+    })
+});
+
+router.get("/user/bulk", authMiddleware, async (req,res) => {
+    const filter = req.query.filter || "";  // This will ensure that if no filter is provided, it will evaluate to an empty string
+
+    const users = await User.find({
+        $or: [{
+            firstname: {
+                "$regex": filter            
+            }, 
+
+            lastname: {
+                "$regex": filter
+            }
+        }]
+    }) // This is the mongoDB query to find users whose parameters match or look like the filter.
+
+    res.json({
+        user: users.map(user => ({
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            _id: user._id
+        })) // This will use the map function to create a new array of users with only the parameters we want to return.
+
+        })
+    })
 
 module.exports = router;
