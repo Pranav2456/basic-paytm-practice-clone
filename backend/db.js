@@ -57,12 +57,28 @@ usersSchema.methods.createHash = async function (plainTextPassword) {
   usresSchema.methods.validatePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password_hash);
   };
-  
+
+  const accountSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, // Reference to the user model
+        ref: "User",
+        required: true
+    },
+
+    balance: {
+        type: Number,
+        required: true
+    }
+  });
+
+
 
 const User = mongoose.model("User",usersSchema);
+const Account = mongoose.model("Account", accountSchema);
 
 
 
 module.exports = {
-    User
+    User,
+    Account,
 };
