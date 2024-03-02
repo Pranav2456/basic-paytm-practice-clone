@@ -1,3 +1,5 @@
+// Database connections and schema definitions. Bcrypt is also used to hash the password.
+
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
 
@@ -49,7 +51,7 @@ usersSchema.methods.createHash = async function (plainTextPassword) {
     const salt = await bcrypt.genSalt(saltRounds);
     return await bcrypt.hash(plainTextPassword, salt);
   
-    // Second mehtod - Or we can create salt and hash in a single method also
+    // Second method - Or we can create salt and hash in a single method also
     // return await bcrypt.hash(plainTextPassword, saltRounds);
   };
   

@@ -1,9 +1,12 @@
-const { User } = require('../db');
+// Initialzation of user router, all the user related routes are defined here.
+
+const { User, Account } = require('../db');
 const zod = require('zod');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { JWT_SECRET } = require('../config');
 const { authMiddleware } = require('../middleware');
+const express = require('express');
 
 const router = express.Router();
 
@@ -41,6 +44,12 @@ router.post("/signup", async (req,res) => {
     user.password_hash = hashedPassword;
 
     const userId = user._id;
+
+    await Account.create({
+        userId,
+        balance: 1 + Math.random() * 10000
+    })
+
 
     const token = jwt.sign({
         userId

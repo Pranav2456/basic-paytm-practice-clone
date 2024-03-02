@@ -1,3 +1,5 @@
+// Initiate the server.
+
 const express = require("express");
 const rootRouter = require("./routes/index");
 const cors = require("cors");
