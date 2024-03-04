@@ -20,10 +20,9 @@ const usersSchema = new mongoose.Schema({
         maxLength: 30
     },
 
-    password: {
+    password_hash: {
         type: String,
         required: true,
-        minLength: 6
     },
 
     firstName: {
@@ -56,7 +55,7 @@ usersSchema.methods.createHash = async function (plainTextPassword) {
   };
   
   // Validating the candidate password with stored hash and hash function
-  usresSchema.methods.validatePassword = async function (candidatePassword) {
+  usersSchema.methods.validatePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password_hash);
   };
 

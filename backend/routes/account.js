@@ -5,6 +5,7 @@ const { Account } = require('../db');
 const router = express.Router();
 
 router.get("/balance", authMiddleware, async (req,res) => {
+
     const account = await Account.findOne({
         userId: req.userId
     });

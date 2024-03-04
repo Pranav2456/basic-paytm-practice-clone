@@ -12,7 +12,7 @@ const router = express.Router();
 
 
 const signUpSchema = zod.object({
-    username: zod.string.email(),
+    username: zod.string().email(),
     firstName: zod.string(),
     lastName: zod.string(),
     password: zod.string()
@@ -34,14 +34,13 @@ router.post("/signup", async (req,res) => {
         })
     }
 
+
     const user = await User.create({
         username: req.body.username,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
-    })
-
-    var hashedPassword = await user.createHash(req.body.password);
-    user.password_hash = hashedPassword;
+        password_hash: await bcrypt.hash(req.body.password, 10)
+    });
 
     const userId = user._id;
 
@@ -63,7 +62,7 @@ router.post("/signup", async (req,res) => {
 });
 
 const signInSchema = zod.object({
-    username: zod.string.email(),
+    username: zod.string().email(),
     password: zod.string()
 })
 
